@@ -1,62 +1,39 @@
-# tipo-cambio-service
+# Tipo De Cambio Service
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Servicio REST en **Quarkus** para consultar y registrar el tipo de cambio de monedas.  
+Usa **H2 en memoria** como base de datos y expone un endpoint para obtener el tipo de cambio desde una API externa.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Ejecución en modo desarrollo
 
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
+Ejecuta el proyecto con:
 
 ```shell script
 ./mvnw compile quarkus:dev
 ```
+La aplicación estará disponible en: http://localhost:8080
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+## Endpoint
 
-## Packaging and running the application
+### GET /tipo-cambio/{dni}:
 
-The application can be packaged using:
+Registra un nuevo tipo de cambio en la base de datos.
 
-```shell script
-./mvnw package
+**Cuerpo esperado (JSON):**
+```json
+{
+    "fecha": "2025-08-20",
+    "sunat": 3.555,
+    "compra": 3.549,
+    "venta": 3.561
+}
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+## Respuestas y errores
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+200 OK
 
-If you want to build an _über-jar_, execute the following command:
+400 Bad Request → El campo dni es obligatorio.
 
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
+400 Bad Request → El campo dni debe contener exactamente 8 dígitos numéricos.
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/tipo-cambio-service-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+429 Too Many Requests → Límite de 10 consultas por día alcanzado.
