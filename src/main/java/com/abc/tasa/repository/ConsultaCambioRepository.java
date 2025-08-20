@@ -15,6 +15,9 @@ public class ConsultaCambioRepository implements PanacheRepository<ConsultaCambi
         LocalDateTime inicio = hoy.atStartOfDay();
         LocalDateTime fin = hoy.plusDays(1).atStartOfDay();
 
-        return find("dni = ?1 and fechaConsulta between ?2 and ?3", dni, inicio, fin).count();
+        return stream("dni", dni)
+                .filter(c -> !c.fechaConsulta.isBefore(inicio) && c.fechaConsulta.isBefore(fin))
+                .count();
     }
+
 }

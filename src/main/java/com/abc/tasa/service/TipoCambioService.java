@@ -2,6 +2,7 @@ package com.abc.tasa.service;
 
 import com.abc.tasa.client.TipoCambioClient;
 import com.abc.tasa.client.TipoCambioResponse;
+import com.abc.tasa.exception.LimiteConsultasException;
 import com.abc.tasa.model.ConsultaCambio;
 import com.abc.tasa.repository.ConsultaCambioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,7 +25,7 @@ public class TipoCambioService {
         long consultas = repo.contarConsultasHoy(dni);
 
         if (consultas >= 10) {
-            throw new RuntimeException("Límite de 10 consultas por día alcanzado.");
+            throw new LimiteConsultasException("Límite de 10 consultas por día alcanzado.");
         }
 
         TipoCambioResponse response = client.obtenerTipoCambio();
